@@ -27,6 +27,20 @@ def save_attachment(mail: CaseInsensitiveDict, target_path: Optional[str] = None
             with open(file_path, 'wb') as f:
                 f.write(raw)
 
+def save_one_attachment(mail: CaseInsensitiveDict, attach:tuple or list,target_path: Optional[str] = None, overwrite=False):
+    """Save one designated attachment."""
+    if attach in mail['attachments']:
+        if target_path is not None:
+            assert os.path.isdir(target_path) and os.path.exists(target_path)
+        else:
+            target_path = os.getcwd()
+
+        name, raw = attach
+        file_path = os.path.join(target_path, name)
+        if not overwrite and os.path.exists(file_path):
+            raise FileExistsError("{} already exists, set overwrite to True to avoid this error.")
+        with open(file_path, 'wb') as f:
+            f.write(raw)
 
 def show(mails: list or CaseInsensitiveDict) -> None:
     """Show mail or mails."""
